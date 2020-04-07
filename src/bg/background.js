@@ -1,7 +1,27 @@
-// if you checked "fancy-settings" in extensionizr.com, uncomment this lines
+var background = (function() {
 
-// var settings = new Store("settings", {
-//     "sample_setting": "This is how you use Store.js to remember values"
-// });
+    function menuClicked(event, tab) {
+        chrome.tabs.sendMessage(tab.id, {'event': 'menu-clicked'}, function(response) {
+            console.log(response);
+          });
+        console.log(event, tab);
+    }
 
+    function addContextMenu() { 
+        chrome.contextMenus.create({
+              title: "Web Collab - Create",
+              contexts: ["all"],
+              onclick: menuClicked
+        });
+    }
 
+    function init(){
+        addContextMenu();
+    }
+
+    return {
+        'init' : init
+    }
+})();
+
+background.init();

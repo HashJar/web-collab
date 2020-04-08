@@ -1,7 +1,20 @@
 var background = (function() {
 
+    var lastClickPosition;
+    
+    function addMessageListener() {
+        chrome.runtime.onMessage.addListener(
+          function(request, sender, sendResponse) {
+            if(request.event == 'mouseup' ) {
+                lastClickPosition = request.point;
+            }
+            console.log(request);
+            sendResponse({'message': 'Thanks!'});
+          });
+    }
+
     function menuClicked(event, tab) {
-        chrome.tabs.sendMessage(tab.id, {'event': 'menu-clicked'}, function(response) {
+        chrome.tabs.sendMessage(tab.id, {'event': 'menu-clicked', 'position': lastClickPosition}, function(response) {
             console.log(response);
           });
         console.log(event, tab);
@@ -16,6 +29,7 @@ var background = (function() {
     }
 
     function init(){
+        addMessageListener();
         addContextMenu();
     }
 

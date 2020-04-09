@@ -1,15 +1,16 @@
-.web-collab-marker{
-	background-color: #00a1ffa3;
-	border-radius: 25px;
-	height: 40px;
+.web-collab-marker {
+    background-color: #00a1ffa3;
+    border-radius: 25px;
+    height: 40px;
     position: absolute; 
     transition: all 800ms;
     width: 40px;
-	z-index:100; 
+    z-index:100;
 }
 
+.web-collab-marker.active,
 .web-collab-marker:hover {
-	border-radius: 25px;
+    border-radius: 25px;
     transition: all 800ms;
     width: 200px;
 }

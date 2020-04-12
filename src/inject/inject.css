@@ -18,7 +18,7 @@
     
 }
 
-.web-collab-marker.active .web-collab-marker-icon,
+.web-collab-marker.web-collab-active .web-collab-marker-icon,
 .web-collab-marker:hover .web-collab-marker-icon {
     background-color: #00a1ffa3;
 }
@@ -27,9 +27,9 @@
 .web-collab-marker-note {
     background: rgba(0, 161, 255, 1);
     border-radius: 25px;
-    display: inline-block;
-    padding: 7px;
+    display: none;
     margin-left: 10px;
+    padding: 7px;
 }
 
 .web-collab-marker-note textarea {
@@ -38,6 +38,6 @@
     border-radius:25px;
 }
 
-
-
-
+.web-collab-marker.web-collab-active .web-collab-marker-note {
+    display: inline-block;
+}

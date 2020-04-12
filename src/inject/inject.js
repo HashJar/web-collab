@@ -10,10 +10,12 @@ var inject = (function() {
         marker.setAttribute('style', 'top:' + position.y + 'px;left:' + position.x + 'px');
         marker.setAttribute('class', 'web-collab-marker');
         marker.setAttribute('id', markerId);
+        
 
         // Create marker icon
         markerIcon = document.createElement('div');
         markerIcon.setAttribute('class', 'web-collab-marker-icon');
+        markerIcon.addEventListener('click', toggleMarkerActive, false);
         
         marker.appendChild(markerIcon);
         document.body.appendChild(marker);
@@ -31,7 +33,7 @@ var inject = (function() {
     function askForNote(markerId) {
         var marker, notebox, note;
         marker = document.getElementById(markerId);
-        marker.classList.add("active");
+        marker.classList.add("web-collab-active");
         note = document.createElement('div');
         note.classList.add("web-collab-marker-note");
         notebox = document.createElement('textarea');
@@ -66,6 +68,14 @@ var inject = (function() {
             var message = {'event': 'mouseup', 'point': point};
             chrome.runtime.sendMessage(message, function(response) {});
         });
+    }
+
+
+    /*
+        Event listeners
+    */
+    function toggleMarkerActive() {
+        this.parentNode.classList.toggle('web-collab-active')
     }
 
     function init() {

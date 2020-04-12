@@ -1,16 +1,43 @@
+.web-collab-marker * {
+    box-sizing: border-box;
+}
+
 .web-collab-marker {
-    background-color: #00a1ffa3;
-    border-radius: 25px;
-    height: 40px;
-    position: absolute; 
-    transition: all 800ms;
-    width: 40px;
+    position: absolute;
     z-index:100;
 }
 
-.web-collab-marker.active,
-.web-collab-marker:hover {
+.web-collab-marker-icon {
+    background-color: #00a1ffa3;
+    border: solid 5px #00a1ff;
     border-radius: 25px;
+    display: inline-block;
+    height: 40px;
     transition: all 800ms;
-    width: 200px;
+    width: 40px;
+    
 }
+
+.web-collab-marker.active .web-collab-marker-icon,
+.web-collab-marker:hover .web-collab-marker-icon {
+    background-color: #00a1ffa3;
+}
+
+
+.web-collab-marker-note {
+    background: rgba(0, 161, 255, 1);
+    border-radius: 25px;
+    display: inline-block;
+    padding: 7px;
+    margin-left: 10px;
+}
+
+.web-collab-marker-note textarea {
+    background-color: #e9f5ff;
+    border: none;
+    border-radius:25px;
+}
+
+
+
+

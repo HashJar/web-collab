@@ -3,11 +3,19 @@ var inject = (function() {
     var lastMarkerId;
 
     function addMarker(position, markerId) {
-        var marker;
+        var marker, markerIcon;
+
+        // Create outer wrapper for the marker
         marker = document.createElement('div');
         marker.setAttribute('style', 'top:' + position.y + 'px;left:' + position.x + 'px');
         marker.setAttribute('class', 'web-collab-marker');
         marker.setAttribute('id', markerId);
+
+        // Create marker icon
+        markerIcon = document.createElement('div');
+        markerIcon.setAttribute('class', 'web-collab-marker-icon');
+        
+        marker.appendChild(markerIcon);
         document.body.appendChild(marker);
     }
 
@@ -21,11 +29,14 @@ var inject = (function() {
     }
 
     function askForNote(markerId) {
-        var marker, notebox;
+        var marker, notebox, note;
         marker = document.getElementById(markerId);
         marker.classList.add("active");
+        note = document.createElement('div');
+        note.classList.add("web-collab-marker-note");
         notebox = document.createElement('textarea');
-        marker.appendChild(notebox);
+        note.appendChild(notebox);
+        marker.appendChild(note);
     }
 
     function handleContextMenuClick(position) {

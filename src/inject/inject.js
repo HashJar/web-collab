@@ -2,6 +2,7 @@ var inject = (function() {
     
     var lastMarkerId, urlHash, markerIdPrefix;
 
+    lastMarkerId = 0;
     markerIdPrefix = 'web-collab-marker-';
 
     function addMarker(position, markerId) {
@@ -26,33 +27,83 @@ var inject = (function() {
     }
 
     function newMarkerId() {
-        if ('undefined' == typeof lastMarkerId) {
-            lastMarkerId = 0;
-        }
         lastMarkerId += 1;
 
         return markerIdPrefix + lastMarkerId.toString();
     }
 
-    function askForNote(markerId) {
+    function addNotebox(markerId, askForNote, noteText) {
         var marker, notebox, note;
+
+        if(typeof noteText == 'undefined') {
+            noteText = '';
+        }
+
         marker = document.getElementById(markerId);
-        marker.classList.add("web-collab-active");
+        
         note = document.createElement('div');
         note.classList.add("web-collab-marker-note");
         notebox = document.createElement('textarea');
         notebox.addEventListener('blur', noteboxLostFocus, false);
+        notebox.value = noteText;
 
         note.appendChild(notebox);
         marker.appendChild(note);
-        notebox.focus();
+
+        if(askForNote == true) {
+            setTimeout(function() { 
+                marker.classList.add("web-collab-active");
+                notebox.focus();
+            }, 500);
+        }
+
     }
 
+    function createHash(inputString) {
+        var hash = 0, i, chr;
+        for (i = 0; i < inputString.length; i++) {
+          chr   = inputString.charCodeAt(i);
+          hash  = ((hash << 5) - hash) + chr;
+          hash |= 0; // Convert to 32bit integer
+        }
+        console.log(hash);
+        return hash.toString();
+    }
+
+    function loadMarkers() {
+        chrome.storage.local.get([urlHash + '-marker-list'], function(index) {
+            if(typeof index[urlHash + '-marker-list'] == 'undefined') {
+                console.log('No markers found!')
+                return; 
+            }
+
+            // Get all markers from storage
+            chrome.storage.local.get(index[urlHash + '-marker-list'], function(markerList) {
+                Object.keys(markerList).forEach(function(markerkey) {
+                    console.log(markerkey, markerList[markerkey]);
+                    var markerId;
+
+                    markerId = markerIdPrefix + markerList[markerkey]['id'];
+                    if (parseInt(markerList[markerkey]['id']) > lastMarkerId){ 
+                        lastMarkerId = parseInt(markerList[markerkey]['id']);
+                    }
+                    addMarker(markerList[markerkey]['position'], markerId);
+                    addNotebox(markerId, false, markerList[markerkey]['noteText']);
+                });
+            }); 
+
+        });
+    }
+    
+    /*
+        Event listeners
+    */
+
     function handleContextMenuClick(position) {
-        var markerId, note;
+        var markerId;
         markerId = newMarkerId();
         addMarker(position, markerId);
-        setTimeout(function() { askForNote(markerId) }, 500);
+        addNotebox(markerId, true);
     }
 
     function addMessageListener() {
@@ -77,22 +128,6 @@ var inject = (function() {
         });
     }
 
-
-    function createHash(inputString) {
-        var hash = 0, i, chr;
-        for (i = 0; i < inputString.length; i++) {
-          chr   = inputString.charCodeAt(i);
-          hash  = ((hash << 5) - hash) + chr;
-          hash |= 0; // Convert to 32bit integer
-        }
-        console.log(hash);
-        return hash.toString();
-    }
-    
-    /*
-        Event listeners
-    */
-
     function toggleMarkerActive() {
         this.parentNode.classList.toggle('web-collab-active');
     }
@@ -102,7 +137,7 @@ var inject = (function() {
         
         noteText = this.value.trim();
         markerElement = this.parentNode.parentNode;
-        marker = {id:markerElement.getAttribute('id').replace(markerIdPrefix, ''), x: markerElement.getAttribute('data-left'), y: markerElement.getAttribute('data-top')};
+        marker = {id: markerElement.getAttribute('id').replace(markerIdPrefix, ''), x: markerElement.getAttribute('data-left'), y: markerElement.getAttribute('data-top')};
         markerKey = urlHash + '-' + marker.id;
 
         chrome.storage.local.get([markerKey], function(result) {
@@ -117,6 +152,7 @@ var inject = (function() {
             if(typeof result[markerKey] == 'object') {
                 store[markerKey] = result[markerKey];
             }
+            store[markerKey]['id'] = marker.id;
             store[markerKey]['position'] = {x: marker.x, y: marker.y};
             store[markerKey]['noteText'] = noteText;
             if(typeof store[markerKey]['createdOn'] == 'undefined') {
@@ -129,7 +165,7 @@ var inject = (function() {
             });
         });
 
-        // Async add marker Id to list of markers for the page. 
+        // Async-ly add marker Id to list of markers for the page. 
         chrome.storage.local.get([urlHash + '-marker-list'], function(result) {
             console.log(result);
             if(typeof result[urlHash + '-marker-list'] == 'undefined') {
@@ -150,6 +186,8 @@ var inject = (function() {
         urlHash = createHash(window.location.href);
         addClickListener();
         addMessageListener();
+
+        loadMarkers();
     }
 
     return {

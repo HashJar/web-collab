@@ -1,6 +1,8 @@
 var inject = (function() {
     
-    var lastMarkerId, urlHash;
+    var lastMarkerId, urlHash, markerIdPrefix;
+
+    markerIdPrefix = 'web-collab-marker-';
 
     function addMarker(position, markerId) {
         var marker, markerIcon;
@@ -29,7 +31,7 @@ var inject = (function() {
         }
         lastMarkerId += 1;
 
-        return 'web-collab-marker-' + lastMarkerId.toString();
+        return markerIdPrefix + lastMarkerId.toString();
     }
 
     function askForNote(markerId) {
@@ -96,36 +98,51 @@ var inject = (function() {
     }
 
     function noteboxLostFocus() {
-        var noteText, marker, markerPosition;
+        var noteText, markerElement, marker;
         
         noteText = this.value.trim();
-        marker = this.parentNode.parentNode;
-        markerPosition = {x: marker.getAttribute('data-left'), y: marker.getAttribute('data-top')};
-        
-        chrome.storage.local.get([urlHash], function(result) {
+        markerElement = this.parentNode.parentNode;
+        marker = {id:markerElement.getAttribute('id').replace(markerIdPrefix, ''), x: markerElement.getAttribute('data-left'), y: markerElement.getAttribute('data-top')};
+        markerKey = urlHash + '-' + marker.id;
+
+        chrome.storage.local.get([markerKey], function(result) {
             console.log(result);
             var store = {};
-            store[urlHash] = {};
-            if(typeof result[urlHash]['noteText'] != 'undefined' && result[urlHash]['noteText'] == noteText ) {
-                // return
+            store[markerKey] = {};
+            if(typeof result[markerKey] != 'undefined' && typeof result[markerKey]['noteText'] != 'undefined' && result[markerKey]['noteText'] == noteText ) {
                 console.log('Not updated')
                 return;
             }
 
-            if(typeof result[urlHash] == 'object') {
-                store[urlHash] = result[urlHash];
+            if(typeof result[markerKey] == 'object') {
+                store[markerKey] = result[markerKey];
             }
-            store[urlHash]['position'] = markerPosition;
-            store[urlHash]['noteText'] = noteText;
-            if(typeof store[urlHash]['createdOn'] == 'undefined') {
-                store[urlHash]['createdAt'] = 'now';
+            store[markerKey]['position'] = {x: marker.x, y: marker.y};
+            store[markerKey]['noteText'] = noteText;
+            if(typeof store[markerKey]['createdOn'] == 'undefined') {
+                store[markerKey]['createdAt'] = new Date();;
             }
-            store[urlHash]['undatedAt'] = 'now';
+            store[markerKey]['undatedAt'] = new Date();;
 
             chrome.storage.local.set(store, function() {
                 console.log('Value is set to ' + store);
             });
         });
+
+        // Async add marker Id to list of markers for the page. 
+        chrome.storage.local.get([urlHash + '-marker-list'], function(result) {
+            console.log(result);
+            if(typeof result[urlHash + '-marker-list'] == 'undefined') {
+                result[urlHash + '-marker-list'] = [];
+            }
+            if(result[urlHash + '-marker-list'].indexOf(markerKey) == -1) {
+                result[urlHash + '-marker-list'].push(markerKey);
+            }
+            chrome.storage.local.set(result, function() {
+                console.log('Value is set to ' + result);
+            });
+        });
+
         this.parentNode.parentNode.classList.toggle('web-collab-active');
     }
 

@@ -1,6 +1,6 @@
 var inject = (function() {
     
-    var lastMarkerId;
+    var lastMarkerId, urlHash;
 
     function addMarker(position, markerId) {
         var marker, markerIcon;
@@ -8,6 +8,8 @@ var inject = (function() {
         // Create outer wrapper for the marker
         marker = document.createElement('div');
         marker.setAttribute('style', 'top:' + position.y + 'px;left:' + position.x + 'px');
+        marker.setAttribute('data-top', position.y);
+        marker.setAttribute('data-left', position.x);
         marker.setAttribute('class', 'web-collab-marker');
         marker.setAttribute('id', markerId);
         
@@ -37,6 +39,8 @@ var inject = (function() {
         note = document.createElement('div');
         note.classList.add("web-collab-marker-note");
         notebox = document.createElement('textarea');
+        notebox.addEventListener('blur', noteboxLostFocus, false);
+
         note.appendChild(notebox);
         marker.appendChild(note);
     }
@@ -71,14 +75,61 @@ var inject = (function() {
     }
 
 
+    function createHash(inputString) {
+        var hash = 0, i, chr;
+        for (i = 0; i < inputString.length; i++) {
+          chr   = inputString.charCodeAt(i);
+          hash  = ((hash << 5) - hash) + chr;
+          hash |= 0; // Convert to 32bit integer
+        }
+        console.log(hash);
+        return hash.toString();
+    }
+    
     /*
         Event listeners
     */
+
     function toggleMarkerActive() {
-        this.parentNode.classList.toggle('web-collab-active')
+        this.parentNode.classList.toggle('web-collab-active');
+    }
+
+    function noteboxLostFocus() {
+        var noteText, marker, markerPosition;
+        
+        noteText = this.value.trim();
+        marker = this.parentNode.parentNode;
+        markerPosition = {x: marker.getAttribute('data-left'), y: marker.getAttribute('data-top')};
+        
+        chrome.storage.local.get([urlHash], function(result) {
+            console.log(result);
+            var store = {};
+            store[urlHash] = {};
+            if(typeof result[urlHash]['noteText'] != 'undefined' && result[urlHash]['noteText'] == noteText ) {
+                // return
+                console.log('Not updated')
+                return;
+            }
+
+            if(typeof result[urlHash] == 'object') {
+                store[urlHash] = result[urlHash];
+            }
+            store[urlHash]['position'] = markerPosition;
+            store[urlHash]['noteText'] = noteText;
+            if(typeof store[urlHash]['createdOn'] == 'undefined') {
+                store[urlHash]['createdAt'] = 'now';
+            }
+            store[urlHash]['undatedAt'] = 'now';
+
+            chrome.storage.local.set(store, function() {
+                console.log('Value is set to ' + store);
+            });
+        });
+        this.parentNode.parentNode.classList.toggle('web-collab-active');
     }
 
     function init() {
+        urlHash = createHash(window.location.href);
         addClickListener();
         addMessageListener();
     }

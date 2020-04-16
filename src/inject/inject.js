@@ -43,6 +43,7 @@ var inject = (function() {
 
         note.appendChild(notebox);
         marker.appendChild(note);
+        notebox.focus();
     }
 
     function handleContextMenuClick(position) {

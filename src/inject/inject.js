@@ -73,7 +73,7 @@ var inject = (function() {
 
         deleteButton = document.createElement('button')
         deleteButton.classList.add('web-collab-button', 'web-collab-delete-button');
-        deleteButton.innerText = 'Share';
+        deleteButton.innerText = 'Delete';
         deleteButton.addEventListener('click', deleteMarker, false);
         buttonBar.appendChild(deleteButton);
 
@@ -223,8 +223,15 @@ var inject = (function() {
         this.parentNode.parentNode.parentNode.classList.toggle('web-collab-active');
     }
 
-    function cancelNote() {}
+    function cancelNote() {
+        // Get the marker element
+        // web-collab-button < web-collab-button-bar < web-collab-marker-note < web-collab-marker
+
+        this.parentNode.parentNode.parentNode.classList.toggle('web-collab-active');
+    }
+
     function shareMarker() {}
+    
     function deleteMarker() {}
 
 

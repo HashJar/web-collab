@@ -57,16 +57,21 @@
 .web-collab-marker  button {
     background: #f7f7f7;
     border: solid 1px #000;
+    outline: none;
 }
 
 .web-collab-button:not(:first-child) {
     margin-left: 4px;
 }
 
-.web-collab-marker.web-collab-active  button:hover {
+.web-collab-marker  button:hover {
     cursor: pointer;
     background: #fff;
     font-style: italic;
+}
+
+.web-collab-marker  button:active {
+    background: #f6f7a7;
 }
 
 .web-collab-marker button.web-collab-delete-button {

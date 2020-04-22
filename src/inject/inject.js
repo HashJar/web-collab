@@ -1,3 +1,5 @@
+"use strict";
+
 var inject = (function() {
     
     var lastMarkerId, urlHash, markerIdPrefix;
@@ -15,7 +17,6 @@ var inject = (function() {
         marker.setAttribute('data-left', position.x);
         marker.setAttribute('class', 'web-collab-marker');
         marker.setAttribute('id', markerId);
-        
 
         // Create marker icon
         markerIcon = document.createElement('div');
@@ -33,7 +34,8 @@ var inject = (function() {
     }
 
     function addNotebox(markerId, askForNote, noteText) {
-        var marker, notebox, note;
+        var marker, notebox, note, buttonBar, saveButton, cancelButton, 
+            shareButton, deleteButton;
 
         if(typeof noteText == 'undefined') {
             noteText = '';
@@ -47,7 +49,19 @@ var inject = (function() {
         notebox.addEventListener('blur', noteboxLostFocus, false);
         notebox.value = noteText;
 
+        // Add action buttons
+
+        buttonBar = document.createElement('div');
+        buttonBar.classList.add('web-collab-button-bar');
+
+        saveButton = document.createElement('button')
+        saveButton.classList.add('web-collab-button', 'web-collab-save-button');
+        saveButton.innerText = 'Save';
+        saveButton.addEventListener('click', saveNote, false);
+        buttonBar.appendChild(saveButton);
+
         note.appendChild(notebox);
+        note.appendChild(buttonBar);
         marker.appendChild(note);
 
         if(askForNote == true) {
@@ -180,6 +194,10 @@ var inject = (function() {
         });
 
         this.parentNode.parentNode.classList.toggle('web-collab-active');
+    }
+
+    function saveNote() {
+        console.log('Try and save.');
     }
 
     function init() {

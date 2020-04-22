@@ -53,3 +53,14 @@
 .web-collab-marker.web-collab-active .web-collab-marker-note {
     display: inline-block;
 }
+
+.web-collab-marker.web-collab-active  button {
+    background: #f7f7f7;
+    border: solid 1px #000;
+}
+
+.web-collab-marker.web-collab-active  button:hover {
+    cursor: pointer;
+    background: #fff;
+    font-style: italic;
+}

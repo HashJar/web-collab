@@ -147,7 +147,7 @@ var inject = (function() {
     }
 
     function noteboxLostFocus() {
-        var noteText, markerElement, marker;
+        var noteText, markerElement, marker, markerKey;
         
         noteText = this.value.trim();
         markerElement = this.parentNode.parentNode;

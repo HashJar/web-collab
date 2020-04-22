@@ -54,13 +54,22 @@
     display: inline-block;
 }
 
-.web-collab-marker.web-collab-active  button {
+.web-collab-marker  button {
     background: #f7f7f7;
     border: solid 1px #000;
+}
+
+.web-collab-button:not(:first-child) {
+    margin-left: 4px;
 }
 
 .web-collab-marker.web-collab-active  button:hover {
     cursor: pointer;
     background: #fff;
     font-style: italic;
+}
+
+.web-collab-marker button.web-collab-delete-button {
+    border-color: #e45c5c;
+    color: #e45c5c;
 }

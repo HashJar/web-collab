@@ -59,6 +59,25 @@ var inject = (function() {
         saveButton.addEventListener('click', saveNote, false);
         buttonBar.appendChild(saveButton);
 
+        cancelButton = document.createElement('button')
+        cancelButton.classList.add('web-collab-button', 'web-collab-cancel-button');
+        cancelButton.innerText = 'Cancel';
+        cancelButton.addEventListener('click', cancelNote, false);
+        buttonBar.appendChild(cancelButton);
+
+        shareButton = document.createElement('button')
+        shareButton.classList.add('web-collab-button', 'web-collab-share-button');
+        shareButton.innerText = 'Share';
+        shareButton.addEventListener('click', shareMarker, false);
+        buttonBar.appendChild(shareButton);
+
+        deleteButton = document.createElement('button')
+        deleteButton.classList.add('web-collab-button', 'web-collab-delete-button');
+        deleteButton.innerText = 'Share';
+        deleteButton.addEventListener('click', deleteMarker, false);
+        buttonBar.appendChild(deleteButton);
+
+
         note.appendChild(notebox);
         note.appendChild(buttonBar);
         marker.appendChild(note);
@@ -157,14 +176,16 @@ var inject = (function() {
         
         noteText = noteTextarea.value.trim();
         markerElement = this.parentNode.parentNode.parentNode; // Get the web-collab-marker element
-        marker = {id: markerElement.getAttribute('id').replace(markerIdPrefix, ''), x: markerElement.getAttribute('data-left'), y: markerElement.getAttribute('data-top')};
+        marker = {id: markerElement.getAttribute('id').replace(markerIdPrefix, ''), 
+            x: markerElement.getAttribute('data-left'), y: markerElement.getAttribute('data-top')};
         markerKey = urlHash + '-' + marker.id;
 
         chrome.storage.local.get([markerKey], function(result) {
             console.log(result);
             var store = {};
             store[markerKey] = {};
-            if(typeof result[markerKey] != 'undefined' && typeof result[markerKey]['noteText'] != 'undefined' && result[markerKey]['noteText'] == noteText ) {
+            if(typeof result[markerKey] != 'undefined' && typeof result[markerKey]['noteText'] != 'undefined' 
+                && result[markerKey]['noteText'] == noteText ) {
                 console.log('Not updated')
                 return;
             }
@@ -201,6 +222,11 @@ var inject = (function() {
 
         this.parentNode.parentNode.parentNode.classList.toggle('web-collab-active');
     }
+
+    function cancelNote() {}
+    function shareMarker() {}
+    function deleteMarker() {}
+
 
     function init() {
         urlHash = createHash(window.location.href);

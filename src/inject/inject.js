@@ -35,7 +35,7 @@ var inject = (function() {
 
     function addNotebox(markerId, askForNote, noteText) {
         var marker, notebox, note, buttonBar, saveButton, cancelButton, 
-            shareButton, deleteButton;
+            shareButton, deleteButton, messageBox;
 
         if(typeof noteText == 'undefined') {
             noteText = '';
@@ -47,6 +47,7 @@ var inject = (function() {
         note.classList.add("web-collab-marker-note");
         notebox = document.createElement('textarea');
         notebox.value = noteText;
+        notebox.onchange = noteUpdated;
 
         // Add action buttons
 
@@ -76,6 +77,9 @@ var inject = (function() {
         deleteButton.innerText = 'Delete';
         deleteButton.addEventListener('click', deleteMarker, false);
         buttonBar.appendChild(deleteButton);
+
+        messageBox =  document.createElement('div');
+        messageBox.classList.add('web-collab-message-box');
 
 
         note.appendChild(notebox);
@@ -164,6 +168,10 @@ var inject = (function() {
         this.parentNode.classList.toggle('web-collab-active');
     }
 
+    function noteUpdated(e) {
+        this.parentNode.parentNode.classList.add('web-collab-note-updated');
+    }
+
     function saveNote() {
         var noteTextarea, noteText, markerElement, marker, markerKey;
         
@@ -220,7 +228,8 @@ var inject = (function() {
             });
         });
 
-        this.parentNode.parentNode.parentNode.classList.toggle('web-collab-active');
+        this.parentNode.parentNode.parentNode.classList.remove('web-collab-active', 'web-collab-note-updated');
+        
     }
 
     function cancelNote() {

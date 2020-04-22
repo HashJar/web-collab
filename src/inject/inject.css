@@ -47,7 +47,16 @@
     display: block;
     width: 100%;
     margin-bottom: 7px;
+}
 
+.web-collab-note-updated .web-collab-marker-icon {
+    background: #f5f19b;
+    border-color: #8a885a;
+}
+
+.web-collab-note-updated .web-collab-marker-note textarea {
+    background: #f5f19b;
+    border-color: #ece9a1;
 }
 
 .web-collab-marker.web-collab-active .web-collab-marker-note {

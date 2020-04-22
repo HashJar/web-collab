@@ -12,6 +12,8 @@ var inject = (function() {
 
         // Create outer wrapper for the marker
         marker = document.createElement('div');
+        position.y = (parseInt(position.y) - 20).toString();
+        position.x = (parseInt(position.x) - 20).toString();
         marker.setAttribute('style', 'top:' + position.y + 'px;left:' + position.x + 'px');
         marker.setAttribute('data-top', position.y);
         marker.setAttribute('data-left', position.x);

@@ -12,5 +12,6 @@ Chrome extension to add comments on public websites
 ## Issues
 
 1. The delete marker option doesn't work.
-3. Sharing doesn't work.
-2. If you remove the extension, all the stored data would be lost.
+2. Sharing doesn't work.
+3. If you remove the extension, all the stored data would be lost.
+4. Marker are saved when a note is added. If you create a marker but don't add any note, it won't be saved.

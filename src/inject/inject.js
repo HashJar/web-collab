@@ -102,21 +102,18 @@ var inject = (function() {
           hash  = ((hash << 5) - hash) + chr;
           hash |= 0; // Convert to 32bit integer
         }
-        console.log(hash);
         return hash.toString();
     }
 
     function loadMarkers() {
         chrome.storage.local.get([urlHash + '-marker-list'], function(index) {
             if(typeof index[urlHash + '-marker-list'] == 'undefined') {
-                console.log('No markers found!')
                 return; 
             }
 
             // Get all markers from storage
             chrome.storage.local.get(index[urlHash + '-marker-list'], function(markerList) {
                 Object.keys(markerList).forEach(function(markerkey) {
-                    console.log(markerkey, markerList[markerkey]);
                     var markerId;
 
                     markerId = markerIdPrefix + markerList[markerkey]['id'];
@@ -145,7 +142,6 @@ var inject = (function() {
     function addMessageListener() {
         chrome.runtime.onMessage.addListener(
           function(request, sender, sendResponse) {
-            console.log(request);
             handleContextMenuClick(request.position);
 
             sendResponse({'message': 'Thanks!'});
@@ -189,12 +185,10 @@ var inject = (function() {
         markerKey = urlHash + '-' + marker.id;
 
         chrome.storage.local.get([markerKey], function(result) {
-            console.log(result);
             var store = {};
             store[markerKey] = {};
             if(typeof result[markerKey] != 'undefined' && typeof result[markerKey]['noteText'] != 'undefined' 
                 && result[markerKey]['noteText'] == noteText ) {
-                console.log('Not updated')
                 return;
             }
 
@@ -210,22 +204,19 @@ var inject = (function() {
             store[markerKey]['undatedAt'] = new Date();;
 
             chrome.storage.local.set(store, function() {
-                console.log('Value is set to ' + store);
+                
             });
         });
 
         // Async-ly add marker Id to list of markers for the page. 
         chrome.storage.local.get([urlHash + '-marker-list'], function(result) {
-            console.log(result);
             if(typeof result[urlHash + '-marker-list'] == 'undefined') {
                 result[urlHash + '-marker-list'] = [];
             }
             if(result[urlHash + '-marker-list'].indexOf(markerKey) == -1) {
                 result[urlHash + '-marker-list'].push(markerKey);
             }
-            chrome.storage.local.set(result, function() {
-                console.log('Value is set to ' + result);
-            });
+            chrome.storage.local.set(result, function() { });
         });
 
         this.parentNode.parentNode.parentNode.classList.remove('web-collab-active', 'web-collab-note-updated');

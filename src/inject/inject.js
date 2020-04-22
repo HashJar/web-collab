@@ -46,7 +46,6 @@ var inject = (function() {
         note = document.createElement('div');
         note.classList.add("web-collab-marker-note");
         notebox = document.createElement('textarea');
-        notebox.addEventListener('blur', noteboxLostFocus, false);
         notebox.value = noteText;
 
         // Add action buttons
@@ -146,11 +145,18 @@ var inject = (function() {
         this.parentNode.classList.toggle('web-collab-active');
     }
 
-    function noteboxLostFocus() {
-        var noteText, markerElement, marker, markerKey;
+    function saveNote() {
+        var noteTextarea, noteText, markerElement, marker, markerKey;
         
-        noteText = this.value.trim();
-        markerElement = this.parentNode.parentNode;
+        noteTextarea = this.parentNode.parentNode.getElementsByTagName('textarea');
+        noteTextarea = noteTextarea.length > 0 ? noteTextarea[0] : null;
+        if (noteTextarea == null) {
+            console.log('Note textarea element missing');
+            return;
+        }
+        
+        noteText = noteTextarea.value.trim();
+        markerElement = this.parentNode.parentNode.parentNode; // Get the web-collab-marker element
         marker = {id: markerElement.getAttribute('id').replace(markerIdPrefix, ''), x: markerElement.getAttribute('data-left'), y: markerElement.getAttribute('data-top')};
         markerKey = urlHash + '-' + marker.id;
 
@@ -193,11 +199,7 @@ var inject = (function() {
             });
         });
 
-        this.parentNode.parentNode.classList.toggle('web-collab-active');
-    }
-
-    function saveNote() {
-        console.log('Try and save.');
+        this.parentNode.parentNode.parentNode.classList.toggle('web-collab-active');
     }
 
     function init() {

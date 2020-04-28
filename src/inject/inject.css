@@ -67,6 +67,8 @@
     background: #f7f7f7;
     border: solid 1px #000;
     outline: none;
+    margin-left: 4px;
+    padding: 2px 6px;
 }
 
 .web-collab-button:not(:first-child) {
